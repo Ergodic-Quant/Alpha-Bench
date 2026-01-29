@@ -1,0 +1,36 @@
+name: Quant Benchmark Bot
+
+# 1. When to wake up
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 2. Grab the code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 3. Setup the tools
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install pandas numpy
+
+    # 4. Run the Judge
+    - name: Run Judge Script
+      run: |
+        python judge.py > results.txt
+
+    # 5. Tell the world the result
+    - name: Comment on PR
+      uses: thollander/actions-comment-pull-request@v2
+      with:
+        filePath: results.txt
